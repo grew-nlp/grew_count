@@ -2,15 +2,74 @@ open Printf
 open Conllx
 open Libgrew
 
+module String_map = Map.Make (String)
+
 exception Error of string
 
-let corpus_dir =
-  match Unix.gethostname () with
-  | "tromboline.local" | "tromboline" -> "/users/guillaum/resources/ud-treebanks-v2.7"
-  | "grew.atilf.fr" -> "/home/guillaum/resources/ud-treebanks-v2.7"
-  | s -> failwith ("unknown hostname: " ^ s)
+(* ================================================================================ *)
+(* global variables *)
+(* ================================================================================ *)
+let (global : string String_map.t ref) = ref String_map.empty
+let set_global key value = global := String_map.add key value !global
+let get_global key =
+  try String_map.find key !global
+  with Not_found -> raise (Error (sprintf "Config error: global parameter `%s` is not set" key))
+
+(* ================================================================================ *)
+(* read_config *)
+(* ================================================================================ *)
+let read_config () =
+  try
+    let elements =
+      List.map
+        (fun item ->
+           Ocsigen_extensions.Configuration.element
+             ~name: item
+             ~pcdata: (fun x -> printf " INFO:  ---> set `%s` config parameter to `%s`\n%!" item x; set_global item x)
+             ()
+        ) ["log"; "corpus_dir"] in
+
+    Ocsigen_extensions.Configuration.process_elements
+      ~in_tag:"eliommodule"
+      ~elements
+      (Eliom_config.get_config ())
+  with
+  | Error msg -> printf " ERROR: ================ Starting error: %s ================\n%!" msg; exit 0
+
+(* ================================================================================ *)
+(* Log *)
+(* ================================================================================ *)
+module Log = struct
+  let out_ch = ref stdout
+
+  let time_stamp () =
+    let gm = Unix.localtime (Unix.time ()) in
+    Printf.sprintf "%02d_%02d_%02d_%02d_%02d_%02d"
+      (gm.Unix.tm_year - 100)
+      (gm.Unix.tm_mon + 1)
+      gm.Unix.tm_mday
+      gm.Unix.tm_hour
+      gm.Unix.tm_min
+      gm.Unix.tm_sec
+
+  let init () =
+    let basename = Printf.sprintf "grew_back_%s.log" (time_stamp ()) in
+    let filename = Filename.concat (get_global "log") basename in
+    out_ch := open_out filename
+
+  let _info s = Printf.fprintf !out_ch "[%s] %s\n%!" (time_stamp ()) s
+  let info s = Printf.ksprintf _info s
+end
+
+(* ================================================================================ *)
+(* main *)
+(* ================================================================================ *)
+
+let _ = read_config ()
+let _ = Log.init ()
 
 let buff = Buffer.create 32
+
 let config = Conllx_config.build "ud"
 
 let count corpora_string patterns_string =
@@ -49,7 +108,7 @@ let count corpora_string patterns_string =
     List.iter (
       fun corpus ->
         try
-          let marshal_file = Filename.concat corpus_dir (Filename.concat corpus (corpus ^ "@2.7.marshal")) in
+          let marshal_file = Filename.concat (get_global "corpus_dir") (Filename.concat corpus (corpus ^ "@2.7.marshal")) in
           let in_ch = open_in_bin marshal_file in
           let data = (Marshal.from_channel in_ch : Corpus.t) in
           let _ = close_in in_ch in

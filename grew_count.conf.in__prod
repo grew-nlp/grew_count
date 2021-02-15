@@ -22,7 +22,7 @@
       <static dir="%%STATICDIR%%" />
       <static dir="%%ELIOMSTATICDIR%%" />
       <eliommodule module="%%LIBDIR%%/%%PROJECT_NAME%%.cma">
-        <log>/Users/guillaum/.local/grew_web/log</log>
+        <log>/home/guillaum/grew_count/log</log>
         <corpus_dir>/home/guillaum/resources/ud-treebanks-v2.7</corpus_dir>
       </eliommodule>
       <eliom/>

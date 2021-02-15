@@ -25,7 +25,7 @@ let () =
             ~title:"grew_count"
             ~css:[["css";"grew_count.css"]]
             Html.F.(body [
-                h1 [txt "Welcome from Eliom's distillery!"];
+                h1 [txt "Grew count service."];
               ])))
 
 (* -------------------------------------------------------------------------------- *)
@@ -38,6 +38,7 @@ let _ = Eliom_registration.String.create
         Eliom_parameter.(string "corpora" ** string "patterns")
       ))
     (fun () (corpora_string, patterns_string) ->
+       Log.info "<count>";
        let tsv = count corpora_string patterns_string in
        Lwt.return (tsv, "text/plain")
     )
