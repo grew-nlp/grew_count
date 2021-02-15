@@ -3,3 +3,4 @@ _deps
 _server
 local
 .depend
+grew_count.conf.in

@@ -21,7 +21,10 @@
     <host hostfilter="*">
       <static dir="%%STATICDIR%%" />
       <static dir="%%ELIOMSTATICDIR%%" />
-      <eliommodule module="%%LIBDIR%%/%%PROJECT_NAME%%.cma" />
+      <eliommodule module="%%LIBDIR%%/%%PROJECT_NAME%%.cma">
+        <log>/Users/guillaum/.local/grew_web/log</log>
+        <corpus_dir>/home/guillaum/resources/ud-treebanks-v2.7</corpus_dir>
+      </eliommodule>
       <eliom/>
     </host>
   </server>
