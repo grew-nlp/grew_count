@@ -147,7 +147,7 @@ let count corpora_string patterns_string =
               (fun (_,pattern) ->
                  let count =
                    Corpus.fold_left (fun acc _ graph ->
-                       acc + (List.length (Graph.search_pattern ~config pattern graph))
+                       acc + (List.length (Matching.search_pattern_in_graph ~config pattern graph))
                      ) 0 data in
                  bprintf buff "\t%d" count
               ) pattern_list;
