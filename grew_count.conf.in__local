@@ -23,7 +23,7 @@
       <static dir="%%ELIOMSTATICDIR%%" />
       <eliommodule module="%%LIBDIR%%/%%PROJECT_NAME%%.cma">
         <log>/Users/guillaum/.local/grew_count/log</log>
-        <grew_match_config_dir>/users/guillaum/gitlab/grew/grew_match/conf/local</grew_match_config_dir>
+        <grew_match_config_dir>/users/guillaum/gitlab/grew/grew_match_local</grew_match_config_dir>
       </eliommodule>
       <eliom/>
     </host>

@@ -53,7 +53,7 @@ module Log = struct
       gm.Unix.tm_sec
 
   let init () =
-    let basename = Printf.sprintf "grew_back_%s.log" (time_stamp ()) in
+    let basename = Printf.sprintf "grew_count_%s.log" (time_stamp ()) in
     let filename = Filename.concat (get_global "log") basename in
     out_ch := open_out filename
 
@@ -76,24 +76,27 @@ type corpus = {
 let current : corpus String_map.t ref = ref String_map.empty
 
 let grew_match_list =
-  let grew_match_config_dir = get_global "grew_match_config_dir" in
   let open Yojson.Basic.Util in
-  let list_file = Filename.concat grew_match_config_dir "grew_match.list" in
-  let json_list = CCIO.(with_in list_file read_lines_l) in
-  List.iter
-    (fun json_file ->
-       let json = Yojson.Basic.from_file (Filename.concat grew_match_config_dir json_file) in
-       List.iter (
-         fun json ->
-           let id = json |> member "id" |> to_string in
-           let corpus = {
-             directory = json |> member "directory" |> to_string;
-             config = try json |> member "config" |> to_string with Type_error _ -> "no_config"
-           } in
-           current := String_map.add id corpus !current
-       ) (json |> member "corpora" |> to_list)
-    ) json_list;
-  printf "--> %d corpora found\n%!" (String_map.cardinal !current)
+  let grew_match_config_dir = Filename.concat (get_global "grew_match_config_dir") "corpora" in
+
+  let children = Sys.readdir grew_match_config_dir in
+  let _ = Array.iter 
+    (fun file ->
+      if Filename.check_suffix file ".json"
+      then
+        let json = Yojson.Basic.from_file (Filename.concat grew_match_config_dir file) in
+        List.iter (
+          fun json ->
+            let id = json |> member "id" |> to_string in
+            let corpus = {
+              directory = json |> member "directory" |> to_string;
+              config = try json |> member "config" |> to_string with Type_error _ -> "no_config"
+            } in
+            current := String_map.add id corpus !current
+        ) (json |> member "corpora" |> to_list)
+      else ()
+    ) children in
+    printf "--> %d corpora found\n%!" (String_map.cardinal !current)
 
 let buff = Buffer.create 32
 
