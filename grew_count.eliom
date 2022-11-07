@@ -29,6 +29,35 @@ let () =
               ])))
 
 (* -------------------------------------------------------------------------------- *)
+(* ping service *)
+(* -------------------------------------------------------------------------------- *)
+let _ = Eliom_registration.String.create
+    ~path:(Eliom_service.Path ["ping"])
+    ~meth:(Eliom_service.Post (
+        Eliom_parameter.unit,
+        Eliom_parameter.unit
+      ))
+    (fun () () ->
+       Log.info "<ping>";
+       Lwt.return ("", "text/plain")
+    )
+
+(* -------------------------------------------------------------------------------- *)
+(* list service *)
+(* -------------------------------------------------------------------------------- *)
+let _ = Eliom_registration.String.create
+    ~path:(Eliom_service.Path ["list"])
+    ~meth:(Eliom_service.Post (
+        Eliom_parameter.unit,
+        Eliom_parameter.unit
+      ))
+    (fun () () ->
+       Log.info "<list>";
+       let corpora = list () in
+       Lwt.return (corpora, "text/plain")
+    )
+
+(* -------------------------------------------------------------------------------- *)
 (* count service *)
 (* -------------------------------------------------------------------------------- *)
 let _ = Eliom_registration.String.create
@@ -42,3 +71,4 @@ let _ = Eliom_registration.String.create
        let tsv = count corpora_string patterns_string in
        Lwt.return (tsv, "text/plain")
     )
+

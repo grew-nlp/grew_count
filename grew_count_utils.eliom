@@ -102,6 +102,12 @@ let buff = Buffer.create 32
 
 let config = Conllx_config.build "sud"
 
+let list () =
+  Buffer.clear buff;
+  String_map.iter (fun id _ -> bprintf buff "%s\n" id) !current;
+  Buffer.contents buff
+
+
 let count corpora_string requests_string =
   try
     let corpora = Yojson.Basic.from_string corpora_string in
