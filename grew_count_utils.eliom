@@ -102,10 +102,10 @@ let buff = Buffer.create 32
 
 let config = Conllx_config.build "sud"
 
-let count corpora_string patterns_string =
+let count corpora_string requests_string =
   try
     let corpora = Yojson.Basic.from_string corpora_string in
-    let patterns = Yojson.Basic.from_string patterns_string in
+    let requests = Yojson.Basic.from_string requests_string in
 
     let open Yojson.Basic.Util in
     Buffer.clear buff;
@@ -114,22 +114,22 @@ let count corpora_string patterns_string =
       try corpora |> to_list |> List.map to_string
       with Type_error _ -> raise (Error "POST argument `corpora` must be list of strings") in
 
-    let pattern_list =
+    let request_list =
       try
-        patterns
+        requests
       |> to_assoc
       |> List.map
         (fun (id, json) ->
            try
-             (id, json |> to_string |> Pattern.parse ~config)
+             (id, json |> to_string |> Request.parse ~config)
            with
-           | Type_error _ -> raise (Error (sprintf "Error in pattern `%s`: not a JSON string" id))
-           | Libgrew.Error msg -> raise (Error (sprintf "Error in pattern `%s`: `%s`" id msg))
+           | Type_error _ -> raise (Error (sprintf "Error in request `%s`: not a JSON string" id))
+           | Libgrew.Error msg -> raise (Error (sprintf "Error in request `%s`: `%s`" id msg))
         )
-        with Type_error _ -> raise (Error "patterns POST arg must be a dictionary") in
+        with Type_error _ -> raise (Error "requests POST arg must be a dictionary") in
 
     bprintf buff "Corpus\t# sentences";
-    List.iter (fun (id,_) -> bprintf buff "\t%s" id) pattern_list;
+    List.iter (fun (id,_) -> bprintf buff "\t%s" id) request_list;
     bprintf buff "\n";
 
     List.iter (
@@ -147,13 +147,13 @@ let count corpora_string patterns_string =
             bprintf buff "\t%d" (Corpus.size data);
 
             List.iter
-              (fun (_,pattern) ->
+              (fun (_,request) ->
                  let count =
                    Corpus.fold_left (fun acc _ graph ->
-                       acc + (List.length (Matching.search_pattern_in_graph ~config pattern graph))
+                       acc + (List.length (Matching.search_request_in_graph ~config request graph))
                      ) 0 data in
                  bprintf buff "\t%d" count
-              ) pattern_list;
+              ) request_list;
             bprintf buff "\n%!"
         with Sys_error _ -> raise (Error (sprintf "Can't load corpus `%s`, please report to Bruno.Guillaume@loria.fr " corpus_id ))
     ) corpus_list;
