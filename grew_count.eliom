@@ -64,11 +64,10 @@ let _ = Eliom_registration.String.create
     ~path:(Eliom_service.Path ["count"])
     ~meth:(Eliom_service.Post (
         Eliom_parameter.unit,
-        Eliom_parameter.(string "corpora" ** string "patterns")
+        Eliom_parameter.(string "corpora" ** string "requests")
       ))
-    (fun () (corpora_string, patterns_string) ->
+    (fun () (corpora_string, requests_string) ->
        Log.info "<count>";
-       let tsv = count corpora_string patterns_string in
+       let tsv = count corpora_string requests_string in
        Lwt.return (tsv, "text/plain")
     )
-
