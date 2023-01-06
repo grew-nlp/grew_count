@@ -1,5 +1,5 @@
 open Printf
-open Conllx
+open Conll
 open Libgrew
 
 module String_map = Map.Make (String)
@@ -100,7 +100,7 @@ let grew_match_list =
 
 let buff = Buffer.create 32
 
-let config = Conllx_config.build "sud"
+let config = Conll_config.build "sud"
 
 let list () =
   Buffer.clear buff;
