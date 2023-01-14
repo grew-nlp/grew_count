@@ -22,7 +22,7 @@ LOCAL_STATIC = static
 # Make sure you have the following packages installed
 # - *dbm* if you use dbm --> opam install dbm.
 # - *sqlite* if you use sqlite --> opam install sqlite3.
-PERSISTENT_DATA_BACKEND = dbm
+PERSISTENT_DATA_BACKEND = sqlite
 
 # Debug application (yes/no): Debugging info in compilation,
 # JavaScript, ocsigenserver
