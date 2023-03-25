@@ -1,6 +1,6 @@
 open Printf
 open Conll
-open Libgrew
+open Grewlib
 
 module String_map = Map.Make (String)
 
@@ -130,7 +130,7 @@ let count corpora_string requests_string =
              (id, json |> to_string |> Request.parse ~config)
            with
            | Type_error _ -> raise (Error (sprintf "Error in request `%s`: not a JSON string" id))
-           | Libgrew.Error msg -> raise (Error (sprintf "Error in request `%s`: `%s`" id msg))
+           | Grewlib.Error msg -> raise (Error (sprintf "Error in request `%s`: `%s`" id msg))
         )
         with Type_error _ -> raise (Error "requests POST arg must be a dictionary") in
 
