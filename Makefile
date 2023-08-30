@@ -14,7 +14,7 @@ include Makefile.options
 ## Required binaries
 ELIOMC            := eliomc -ppx
 ELIOMOPT          := eliomopt -ppx
-JS_OF_ELIOM       := js_of_eliom -ppx #HACK_JENKINS
+JS_OF_ELIOM       := js_of_eliom -ppx
 ELIOMDEP          := eliomdep
 OCSIGENSERVER     := ocsigenserver
 OCSIGENSERVER.OPT := ocsigenserver.opt
