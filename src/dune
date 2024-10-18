@@ -1,0 +1,7 @@
+(executable
+ (public_name grew_count)
+ (name grew_count)
+ (libraries yojson containers ANSITerminal amr conll grewlib fileutils dream)
+ (preprocess (pps lwt_ppx))
+)
+
