@@ -20,9 +20,22 @@ let count_route =
     | _ -> Dream.empty `Bad_Request
   )
 
+let set_config_route =
+  Dream.post "set_config"
+  (fun request ->
+    match%lwt Dream.form ~csrf:false request with
+    | `Ok param ->
+      let config = List.assoc "config" param  in
+      let response = wrap set_config config in
+      Log.info "<set_config> config=[%s]" config;
+      Dream.respond response
+    | _ -> Dream.empty `Bad_Request
+  )
+
 let all_routes = [
   home_route;
   ping_route;
+  set_config_route;
   count_route;
 ]
 

@@ -6,7 +6,10 @@ open Grewlib
 
 open Utils
 
-let config = Conll_config.build "basic"
+let config = ref (Conll_config.build "basic")
+let set_config config_name = 
+  config := Conll_config.build config_name;
+  "OK"
 
 let corpusbank = ref None
 let load_corpusbank () =
@@ -21,7 +24,6 @@ let get_corpus_desc corpus_id =
     | Some c -> c
 
 let buff = Buffer.create 32
-
 let count corpora_string requests_string =
   let open Yojson.Basic.Util in
 
@@ -40,7 +42,7 @@ let count corpora_string requests_string =
       |> to_assoc
       |> List.map
         (fun (id, json) ->
-           try (id, json |> to_string |> Request.parse ~config)
+           try (id, json |> to_string |> Request.parse ~config:!config)
            with
            | Type_error _ -> error "Error in request `%s`: not a JSON string" id
            | Grewlib.Error msg -> error "Error in request `%s`: `%s`" id msg
@@ -63,7 +65,7 @@ let count corpora_string requests_string =
           (fun (_,request) ->
             let count =
               Corpus.fold_left (fun acc _ graph ->
-                acc + (List.length (Matching.search_request_in_graph ~config request graph))
+                acc + (List.length (Matching.search_request_in_graph ~config:!config request graph))
               ) 0 corpus in
             bprintf buff "\t%d" count
           ) request_list;

@@ -1,6 +1,6 @@
 import requests
 
-url = "http://localhost:4242/count"
+url = "http://localhost:4242"
 
 data={
 'corpora': '''[
@@ -32,6 +32,7 @@ data={
 }
 '''}
 
-response = requests.request("POST", url, data=data)
+requests.request("POST", f'{url}/set_config', data={'config': 'sud'})
 
+response = requests.request("POST", f'{url}/count', data=data)
 print(response.text)
