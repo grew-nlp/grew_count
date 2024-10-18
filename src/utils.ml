@@ -32,7 +32,10 @@ module Dream_config = struct
   let current = ref []
   let load ?(required=[]) () =
     let open Yojson.Basic.Util in
-    let config_file = Filename.concat (Unix.getcwd()) "dream_config.json" in
+    let config_file =
+      if Array.length Sys.argv > 1
+      then Sys.argv.(1)
+      else error "a config file must be given in the command line" in
     try
       current :=
         config_file
