@@ -5,3 +5,4 @@ local
 .depend
 grew_count.conf.in
 .vscode
+_build

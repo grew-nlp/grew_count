@@ -105,18 +105,12 @@ end
 
 (* ================================================================================ *)
 let wrap fct last_arg =
-  warnings := [];
   Log.start();
-  let json =
-    try
-      let data = fct last_arg in
-      match !warnings with
-      | [] -> `Assoc [ ("status", `String "OK"); ("data", data) ]
-      | l -> `Assoc [ ("status", `String "WARNING"); ("messages", `List l); ("data", data) ]
-    with
-    | Error msg -> `Assoc [ ("status", `String "ERROR"); ("message", `String msg) ]
-    | Conll_error t -> `Assoc [ ("status", `String "ERROR"); ("message", t) ]
-    | Grewlib.Error t -> `Assoc [ ("status", `String "ERROR"); ("message", `String t) ]
-    | Amr.Error t -> `Assoc [ ("status", `String "ERROR"); ("message", `String t) ]
-    | exc -> `Assoc [ ("status", `String "BUG"); ("Unexpected exception", `String (Printexc.to_string exc)) ] in
-  json
+  try fct last_arg
+  with
+    | Error msg -> sprintf "ERROR: %s" msg
+    | Conll_error t -> sprintf "ERROR: %s" (Yojson.Basic.to_string t)
+    | Grewlib.Error msg -> sprintf "Grewlib ERROR: %s" msg
+    | Amr.Error msg -> sprintf "Amr ERROR: %s" msg
+    | exc -> sprintf "BUG: Unexpected exception %s" (Printexc.to_string exc)
+

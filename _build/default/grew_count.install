@@ -1,8 +1,0 @@
-lib: [
-  "_build/install/default/lib/grew_count/META"
-  "_build/install/default/lib/grew_count/dune-package"
-  "_build/install/default/lib/grew_count/opam"
-]
-bin: [
-  "_build/install/default/bin/grew_count"
-]
