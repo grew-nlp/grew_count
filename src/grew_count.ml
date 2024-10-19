@@ -2,7 +2,7 @@ open Utils
 open Services
 
 let home_route = 
-  Dream.get "/" (fun _ -> Dream.html "<h1>Welcome to grew_count!</h1>")
+  Dream.get "/" (fun _ -> Dream.html "<h1>Welcome to <code>grew_count</code> service!</h1><p>See <a href=\"https://grew.fr/usage/grew_count/\">https://grew.fr/usage/grew_count/</a> for documentation.</p>")
 
 let ping_route = 
   Dream.get "/ping" (fun _ -> Dream.html "")
