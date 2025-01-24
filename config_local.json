@@ -1,0 +1,5 @@
+{
+	"port": 4242,
+	"corpusbank": "${CORPUSBANK}",
+	"log": "${nlp}/grew_count/log"
+}
